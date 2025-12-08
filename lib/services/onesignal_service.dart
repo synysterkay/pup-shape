@@ -98,7 +98,9 @@ class OneSignalService {
   
   /// Update last activity timestamp
   static Future<void> updateLastActivity() async {
-    await OneSignal.User.addTag('last_active', DateTime.now().toIso8601String());
+    await OneSignal.User.addTags({
+      'last_active': DateTime.now().toIso8601String(),
+    });
   }
   
   /// Set meal reminder times
@@ -123,6 +125,8 @@ class OneSignalService {
   
   /// Track subscription status
   static Future<void> setSubscriptionStatus(bool isPremium) async {
-    await OneSignal.User.addTag('is_premium', isPremium ? 'true' : 'false');
+    await OneSignal.User.addTags({
+      'is_premium': isPremium ? 'true' : 'false',
+    });
   }
 }
