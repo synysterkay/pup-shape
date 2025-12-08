@@ -51,6 +51,8 @@
 	<string>PupShape needs photo library access to save and view your dog's progress photos</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>PupShape needs permission to save progress photos to your library</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>PupShape does not access your location. This permission is required by notification services to function properly.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UIUserInterfaceStyle</key>
