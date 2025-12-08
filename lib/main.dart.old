@@ -1,0 +1,328 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pupshape/providers/auth_provider.dart';
+import 'package:pupshape/providers/dog_provider.dart';
+import 'package:pupshape/providers/meal_provider.dart';
+import 'package:pupshape/screens/splash/splash_screen.dart';
+import 'package:pupshape/screens/onboarding/onboarding_screen.dart';
+import 'package:pupshape/screens/auth/auth_screen.dart';
+import 'package:pupshape/screens/home/home_screen.dart';
+import 'package:pupshape/config/theme.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => DogProvider()),
+        ChangeNotifierProvider(create: (_) => MealProvider()),
+      ],
+      child: MaterialApp(
+        title: 'PupShape',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
+        home: const SplashScreen(),
+        routes: {
+          '/splash': (context) => const SplashScreen(),
+          '/onboarding': (context) => const OnboardingScreen(),
+          '/auth': (context) => const AuthScreen(),
+          '/home': (context) => const HomeScreen(),
+        },
+      ),
+    );
+  }
+}
+
+// Old complex AuthWrapper logic removed
+// Now using: Splash -> Onboarding -> Auth -> Home flow
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF6366F1),
+            brightness: Brightness.light,
+          ),
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            foregroundColor: Color(0xFF1E293B),
+            elevation: 0,
+            centerTitle: false,
+            titleTextStyle: TextStyle(
+              color: Color(0xFF1E293B),
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          cardTheme: CardThemeData(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: Colors.white,
+            shadowColor: Colors.grey.shade200,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6366F1),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFF6366F1),
+              textStyle: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF6366F1), width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red, width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            filled: true,
+            fillColor: Colors.grey.shade50,
+          ),
+          snackBarTheme: SnackBarThemeData(
+            backgroundColor: const Color(0xFF1E293B),
+            contentTextStyle: const TextStyle(color: Colors.white),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+          bottomSheetTheme: const BottomSheetThemeData(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+          ),
+          dividerTheme: DividerThemeData(
+            color: Colors.grey.shade200,
+            thickness: 1,
+          ),
+          progressIndicatorTheme: const ProgressIndicatorThemeData(
+            color: Color(0xFF6366F1),
+          ),
+        ),
+        home: const AuthWrapper(),
+        routes: {
+          '/login': (context) => const LoginScreen(),
+          '/signup': (context) => const SignUpScreen(),
+          '/welcome': (context) => const WelcomeScreen(),
+          '/home': (context) => const HomeScreen(),
+        },
+      ),
+    );
+  }
+}
+
+class AuthWrapper extends StatefulWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  bool _hasShownWelcome = false;
+  bool _isLoadingPrefs = true;
+
+  @override
+  void initState() {
+    super.initState();
+    print('🔄 AuthWrapper initState called');
+    _loadWelcomeStatus();
+  }
+
+  Future<void> _loadWelcomeStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final hasShown = prefs.getBool('has_shown_welcome') ?? false;
+      
+      if (mounted) {
+        setState(() {
+          _hasShownWelcome = hasShown;
+          _isLoadingPrefs = false;
+        });
+        print('📱 Welcome screen status loaded: $hasShown');
+      }
+    } catch (e) {
+      print('⚠️ Error loading welcome status: $e');
+      if (mounted) {
+        setState(() {
+          _hasShownWelcome = false;
+          _isLoadingPrefs = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Show loading while SharedPreferences is loading
+    if (_isLoadingPrefs) {
+      print('⏳ Loading SharedPreferences...');
+      return _buildLoadingScreen('Loading...');
+    }
+
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        print('🔍 AuthProvider Consumer - initialized: ${authProvider.isInitialized}, loading: ${authProvider.isLoading}, user: ${authProvider.user?.email ?? 'null'}');
+        
+        // Show loading while AuthProvider is initializing
+        if (!authProvider.isInitialized) {
+          print('⏳ AuthProvider initializing...');
+          return _buildLoadingScreen('Initializing...');
+        }
+
+        // Show loading during sign-in process (but not for web redirect)
+        if (authProvider.isLoading && !kIsWeb) {
+          print('⏳ Sign-in in progress...');
+          return _buildLoadingScreen('Signing you in...');
+        }
+        
+        // User is authenticated
+        if (authProvider.user != null) {
+          print('✅ User authenticated: ${authProvider.user!.email}');
+          
+          // Check if we should show welcome screen
+          if (!_hasShownWelcome) {
+            print('👋 Showing welcome screen for new user');
+            return WelcomeScreen(
+              key: ValueKey('welcome_${authProvider.user!.uid}'),
+              onComplete: () async {
+                try {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('has_shown_welcome', true);
+                  if (mounted) {
+                    setState(() {
+                      _hasShownWelcome = true;
+                    });
+                  }
+                  print('✅ Welcome screen completed');
+                } catch (e) {
+                  print('⚠️ Error saving welcome status: $e');
+                }
+              },
+            );
+          } else {
+            print('🏠 Showing home screen for returning user');
+            return HomeScreen(key: ValueKey('home_${authProvider.user!.uid}'));
+          }
+        }
+        
+        // User is not authenticated
+        print('❌ No user authenticated, showing LoginScreen');
+        return const LoginScreen(key: ValueKey('login'));
+      },
+    );
+  }
+
+  Widget _buildLoadingScreen(String message) {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF6366F1),
+              Color(0xFF8B5CF6),
+              Color(0xFFEC4899),
+            ],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.pets,
+                  size: 40,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 32),
+              const Text(
+                'Cal Dogs AI',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const SizedBox(
+                width: 32,
+                height: 32,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

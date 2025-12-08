@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "916860410731",
+    "project_id": "petmealai",
+    "storage_bucket": "petmealai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:916860410731:android:029ddbc2e3f6844d3b8a2e",
+        "android_client_info": {
+          "package_name": "com.mealplanner.foodofdogs.petmeal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "916860410731-ttbgbob7a893cm0dgagh6ffi2bmduoei.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mealplanner.foodofdogs.petmeal",
+            "certificate_hash": "352e1a409ceb66a099ae8ca3fea2cece7a0c2188"
+          }
+        },
+        {
+          "client_id": "916860410731-v4m4c3640kmfm44upjirkri4mpq39hpr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mealplanner.foodofdogs.petmeal",
+            "certificate_hash": "d089973c594535bdcdc608aeac3e7d4c6965ef2c"
+          }
+        },
+        {
+          "client_id": "916860410731-0d9fgrh59fdduh1e0jcnvsc3mpo28snf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIMR5rgUerAvTg3YKE1n7XQ48_Q32_-C0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "916860410731-0d9fgrh59fdduh1e0jcnvsc3mpo28snf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "916860410731-72o5ak1bdaq1arslf4vjm3pgc2ldj9fa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mealplanner.foodofdogs.petmeal.calDogsAi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

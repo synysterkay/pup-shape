@@ -1,0 +1,70 @@
+name: pupshape
+description: "AI-powered weight management coach for dogs. Help your dog reach their ideal weight."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  provider: ^6.1.5
+  
+  # Firebase
+  firebase_core: ^4.2.1
+  firebase_auth: ^6.1.2
+  cloud_firestore: ^6.1.0
+  firebase_storage: ^13.0.4
+  
+  # Google Sign In
+  google_sign_in: ^6.2.2
+  
+  # UI Components
+  cupertino_icons: ^1.0.8
+  fl_chart: ^1.1.1
+  
+  # Utilities
+  intl: ^0.20.2
+  http: ^1.6.0
+  
+  # Image handling
+  image_picker: ^1.2.1
+  
+  # Animations
+  animations: ^2.1.1
+  
+  # Notifications
+  flutter_local_notifications: ^19.5.0
+  timezone: ^0.10.1
+  permission_handler: ^12.0.1
+  onesignal_flutter: ^5.2.12
+  
+  # Storage
+  shared_preferences: ^2.4.0
+  
+  # Subscriptions & Paywall (Superwall)
+  superwallkit_flutter: ^2.4.5
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+  
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
+        - asset: fonts/Roboto-Bold.ttf
+          weight: 700
