@@ -43,7 +43,7 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
     
     target.build_configurations.each do |config|
-      # Ensure pods also have minimum iOS 12.0
+      # Ensure pods also have minimum iOS 15.0
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       
       # Disable bitcode for all targets
