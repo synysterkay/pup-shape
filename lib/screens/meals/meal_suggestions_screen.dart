@@ -5,6 +5,7 @@ import 'package:pupshape/providers/dog_provider.dart';
 import 'package:pupshape/providers/meal_provider.dart';
 import 'package:pupshape/providers/plan_provider.dart';
 import 'package:pupshape/services/meal_suggestions_service.dart';
+import 'package:pupshape/services/test_data_generator.dart';
 
 class MealSuggestionsScreen extends StatefulWidget {
   const MealSuggestionsScreen({super.key});
@@ -32,6 +33,22 @@ class _MealSuggestionsScreenState extends State<MealSuggestionsScreen> with Sing
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  // TEST ONLY - Remove before production
+  Future<void> _loadTestData() async {
+    setState(() {
+      _suggestions = TestDataGenerator.getMockMealSuggestions();
+      _isLoading = false;
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('✅ Test data loaded! Ready for screenshots'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   Future<void> _loadSuggestions() async {
@@ -245,6 +262,21 @@ class _MealSuggestionsScreenState extends State<MealSuggestionsScreen> with Sing
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // TEST BUTTON - Remove before production
+              OutlinedButton.icon(
+                onPressed: _loadTestData,
+                icon: const Icon(Icons.science),
+                label: const Text('Generate Test Data (Screenshots)'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.orange,
+                  side: const BorderSide(color: Colors.orange),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ],

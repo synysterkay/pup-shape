@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pupshape/models/daily_tip.dart';
 import 'package:pupshape/providers/dog_provider.dart';
 import 'package:pupshape/services/tips_service.dart';
+import 'package:pupshape/services/test_data_generator.dart';
 import 'package:pupshape/screens/tips/tip_history_screen.dart';
 
 class DailyTipCard extends StatefulWidget {
@@ -21,6 +22,29 @@ class _DailyTipCardState extends State<DailyTipCard> {
   void initState() {
     super.initState();
     _loadTodaysTip();
+  }
+
+  // TEST ONLY - Remove before production
+  void _loadTestTip() {
+    final dogProvider = Provider.of<DogProvider>(context, listen: false);
+    final dog = dogProvider.selectedDog;
+
+    if (dog == null) return;
+
+    setState(() {
+      _todaysTip = TestDataGenerator.getMockDailyTip(
+        dogId: dog.id,
+        dogName: dog.name,
+      );
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('✅ Test tip loaded!'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 
   Future<void> _loadTodaysTip() async {
@@ -147,6 +171,12 @@ class _DailyTipCardState extends State<DailyTipCard> {
                         ),
                       ],
                     ),
+                  ),
+                  // TEST BUTTON - Remove before production
+                  IconButton(
+                    icon: const Icon(Icons.science, size: 20, color: Colors.orange),
+                    onPressed: () => _loadTestTip(),
+                    tooltip: 'Load test tip',
                   ),
                   IconButton(
                     icon: const Icon(Icons.history, size: 20),
