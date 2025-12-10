@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:pupshape/models/dog.dart';
 import 'package:pupshape/models/meal_plan.dart';
@@ -16,6 +17,11 @@ class DeepSeekService {
     required String activityLevel,
     required String gender,
   }) async {
+    // AI features not available on web due to CORS
+    if (kIsWeb) {
+      throw Exception('AI features are only available in the mobile app. Please download the iOS or Android app for full functionality.');
+    }
+    
     try {
       final prompt = '''
 Act as a veterinary nutritionist. Create a detailed weight management plan for a dog with the following profile:

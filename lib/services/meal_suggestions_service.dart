@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:pupshape/models/dog.dart';
 
@@ -11,6 +12,10 @@ class MealSuggestionsService {
     required Dog dog,
     required List<String> frequentMeals,
   }) async {
+    if (kIsWeb) {
+      throw Exception('AI meal suggestions are only available in the mobile app.');
+    }
+    
     try {
       final prompt = '''
 The dog owner frequently logs these meals: ${frequentMeals.join(', ')}

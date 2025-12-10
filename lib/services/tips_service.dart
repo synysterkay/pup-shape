@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pupshape/models/daily_tip.dart';
@@ -18,6 +19,10 @@ class TipsService {
     int? currentStreak,
     int? weekNumber,
   }) async {
+    if (kIsWeb) {
+      throw Exception('AI tips are only available in the mobile app.');
+    }
+    
     try {
       // Calculate progress
       final startWeight = dog.weight;
