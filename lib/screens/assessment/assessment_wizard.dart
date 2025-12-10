@@ -5,7 +5,6 @@ import 'package:pupshape/models/dog.dart';
 import 'package:pupshape/providers/dog_provider.dart';
 import 'package:pupshape/providers/plan_provider.dart';
 import 'package:pupshape/services/deepseek_service.dart';
-import 'package:pupshape/services/test_data_generator.dart';
 import 'package:pupshape/widgets/assessment/breed_selector.dart';
 
 class AssessmentWizard extends StatefulWidget {
@@ -83,85 +82,6 @@ class _AssessmentWizardState extends State<AssessmentWizard> {
         curve: Curves.easeInOut,
       );
       setState(() => _currentStep--);
-    }
-  }
-
-  // TEST ONLY - Remove before production
-  Future<void> _generateTestPlan() async {
-    if (_nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your dog\'s name')),
-      );
-      return;
-    }
-
-    setState(() => _isGeneratingPlan = true);
-
-    try {
-      // Create dog profile
-      final dog = Dog(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _nameController.text.trim(),
-        breed: _selectedBreed,
-        age: _ageYears,
-        weight: _currentWeight,
-        targetWeight: _targetWeight,
-        gender: _gender,
-        activityLevel: _activityLevel,
-        isNeutered: false,
-        allergies: [],
-        healthConditions: [],
-        imageUrl: '',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        mealSchedule: {
-          'breakfast': {'hour': 8, 'minute': 0},
-          'dinner': {'hour': 18, 'minute': 0},
-        },
-        mealsPerDay: 2,
-        enableMealReminders: false,
-        reminderMinutesBefore: 30,
-      );
-
-      // Save to provider
-      final dogProvider = Provider.of<DogProvider>(context, listen: false);
-      await dogProvider.addDog(dog);
-      await dogProvider.setActiveDog(dog);
-
-      // Generate test meal plan
-      final planProvider = Provider.of<PlanProvider>(context, listen: false);
-      final testPlan = TestDataGenerator.getMockWeightLossPlan(
-        dogId: dog.id,
-        dogName: dog.name,
-        currentWeight: _currentWeight,
-        targetWeight: _targetWeight,
-      );
-      await planProvider.savePlan(testPlan);
-
-      if (mounted) {
-        setState(() => _isGeneratingPlan = false);
-        
-        // Navigate to home with success message
-        Navigator.of(context).pushReplacementNamed('/home');
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('✅ Test plan created for ${dog.name}! Ready for screenshots'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() => _isGeneratingPlan = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: AppTheme.errorColor,
-          ),
-        );
-      }
     }
   }
 
@@ -1013,29 +933,6 @@ class _AssessmentWizardState extends State<AssessmentWizard> {
               ),
             ),
           if (_currentStep > 0) const SizedBox(width: 12),
-          // TEST BUTTON - Remove before production
-          if (_currentStep == 3)
-            Expanded(
-              child: OutlinedButton(
-                onPressed: _isGeneratingPlan ? null : _generateTestPlan,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.orange,
-                  side: const BorderSide(color: Colors.orange),
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  'Test Plan',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          if (_currentStep == 3) const SizedBox(width: 12),
           Expanded(
             flex: 2,
             child: ElevatedButton(
