@@ -7,11 +7,10 @@ class MealSuggestionsService {
   static const String _apiKey = 'sk-ee74bd7f230a455a96936b267e0e1a7d';
   static const String _baseUrl = 'https://api.deepseek.com/v1/chat/completions';
   
-  static String get _apiUrl {
+  static void _checkWebPlatform() {
     if (kIsWeb) {
-      return 'https://cors-anywhere.herokuapp.com/https://api.deepseek.com/v1/chat/completions';
+      throw Exception('AI meal suggestions require the mobile app. Basic meal logging works on web!');
     }
-    return _baseUrl;
   }
 
   /// Get recipe variations based on frequently logged meals
@@ -19,6 +18,7 @@ class MealSuggestionsService {
     required Dog dog,
     required List<String> frequentMeals,
   }) async {
+    _checkWebPlatform();
     
     try {
       final prompt = '''
@@ -44,7 +44,7 @@ Return JSON array:
 ''';
 
       final response = await http.post(
-        Uri.parse(_apiUrl),
+        Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
@@ -119,7 +119,7 @@ Return JSON:
 ''';
 
       final response = await http.post(
-        Uri.parse(_apiUrl),
+        Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
@@ -181,7 +181,7 @@ Return JSON:
 ''';
 
       final response = await http.post(
-        Uri.parse(_apiUrl),
+        Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
