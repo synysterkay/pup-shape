@@ -7,6 +7,16 @@ import 'package:pupshape/models/meal_plan.dart';
 class DeepSeekService {
   static const String _apiKey = 'sk-ee74bd7f230a455a96936b267e0e1a7d';
   static const String _baseUrl = 'https://api.deepseek.com/v1/chat/completions';
+  
+  // Use CORS proxy for web platform
+  static String get _apiUrl {
+    if (kIsWeb) {
+      // CORS Anywhere proxy - for development only!
+      // For production, use Firebase Cloud Functions or your own backend
+      return 'https://cors-anywhere.herokuapp.com/https://api.deepseek.com/v1/chat/completions';
+    }
+    return _baseUrl;
+  }
 
   /// Generate a personalized weight management plan for a dog
   Future<DogNutritionPlan> generateWeightPlan({
@@ -17,11 +27,6 @@ class DeepSeekService {
     required String activityLevel,
     required String gender,
   }) async {
-    // AI features not available on web due to CORS
-    if (kIsWeb) {
-      throw Exception('AI features are only available in the mobile app. Please download the iOS or Android app for full functionality.');
-    }
-    
     try {
       final prompt = '''
 Act as a veterinary nutritionist. Create a detailed weight management plan for a dog with the following profile:
@@ -50,7 +55,7 @@ Important: Calculate safe weight loss (0.5-2% of body weight per week). Consider
 ''';
 
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(_apiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
@@ -111,7 +116,7 @@ Provide specific brands, protein sources, and portion sizes in a concise format.
 ''';
 
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(_apiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
@@ -159,7 +164,7 @@ Provide JSON response:
 ''';
 
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(_apiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
@@ -231,7 +236,7 @@ JSON format:
 
     try {
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(_apiUrl),
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $_apiKey'},
         body: jsonEncode({
           'model': 'deepseek-chat',

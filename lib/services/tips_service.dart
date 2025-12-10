@@ -10,6 +10,13 @@ class TipsService {
   static const String _apiKey = 'sk-ee74bd7f230a455a96936b267e0e1a7d';
   static const String _baseUrl = 'https://api.deepseek.com/v1/chat/completions';
   
+  static String get _apiUrl {
+    if (kIsWeb) {
+      return 'https://cors-anywhere.herokuapp.com/https://api.deepseek.com/v1/chat/completions';
+    }
+    return _baseUrl;
+  }
+  
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// Generate a personalized daily tip for a dog
@@ -19,9 +26,6 @@ class TipsService {
     int? currentStreak,
     int? weekNumber,
   }) async {
-    if (kIsWeb) {
-      throw Exception('AI tips are only available in the mobile app.');
-    }
     
     try {
       // Calculate progress
@@ -76,7 +80,7 @@ Guidelines:
 ''';
 
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(_apiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',

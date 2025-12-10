@@ -6,15 +6,19 @@ import 'package:pupshape/models/dog.dart';
 class MealSuggestionsService {
   static const String _apiKey = 'sk-ee74bd7f230a455a96936b267e0e1a7d';
   static const String _baseUrl = 'https://api.deepseek.com/v1/chat/completions';
+  
+  static String get _apiUrl {
+    if (kIsWeb) {
+      return 'https://cors-anywhere.herokuapp.com/https://api.deepseek.com/v1/chat/completions';
+    }
+    return _baseUrl;
+  }
 
   /// Get recipe variations based on frequently logged meals
   Future<List<MealSuggestion>> getRecipeVariations({
     required Dog dog,
     required List<String> frequentMeals,
   }) async {
-    if (kIsWeb) {
-      throw Exception('AI meal suggestions are only available in the mobile app.');
-    }
     
     try {
       final prompt = '''
@@ -40,7 +44,7 @@ Return JSON array:
 ''';
 
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(_apiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
@@ -115,7 +119,7 @@ Return JSON:
 ''';
 
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(_apiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
@@ -177,7 +181,7 @@ Return JSON:
 ''';
 
       final response = await http.post(
-        Uri.parse(_baseUrl),
+        Uri.parse(_apiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $_apiKey',
