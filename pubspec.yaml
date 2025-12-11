@@ -1,7 +1,7 @@
 name: pupshape
 description: "AI-powered weight management coach for dogs. Help your dog reach their ideal weight."
 publish_to: 'none'
-version: 4.0.0+4
+version: 4.0.0+5
 
 environment:
   sdk: '>=3.4.4 <4.0.0'
